@@ -7,10 +7,17 @@ import (
 
 func main() {
 	mux := http.NewServeMux()
+	aboutPage := func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("about page"))
+	}
 
 	mux.HandleFunc("/", homeHandler)
 	mux.HandleFunc("/hello", helloHandler)
 	mux.HandleFunc("/mario", marioHandler)
+	mux.HandleFunc("/about", aboutPage)
+	mux.HandleFunc("/profile", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("profile page"))
+	})
 
 	log.Println("starting web on port 8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
