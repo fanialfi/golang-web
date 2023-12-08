@@ -1,28 +1,34 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 func main() {
 	mux := http.NewServeMux()
-	aboutPage := func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("about page"))
-	}
 
 	mux.HandleFunc("/", homeHandler)
 	mux.HandleFunc("/hello", helloHandler)
 	mux.HandleFunc("/mario", marioHandler)
-	mux.HandleFunc("/about", aboutPage)
-	mux.HandleFunc("/profile", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("profile page"))
-	})
+	mux.HandleFunc("/product", productHandler)
 
 	log.Println("starting web on port 8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatal(err.Error())
 	}
+}
+
+func productHandler(w http.ResponseWriter, r *http.Request) {
+	idNumb, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil || idNumb < 1 {
+		http.NotFound(w, r)
+		return
+	}
+
+	fmt.Fprintf(w, "product page %d", idNumb)
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
