@@ -2,8 +2,10 @@ package handler
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
+	"path/filepath"
 	"strconv"
 )
 
@@ -23,7 +25,18 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	w.Write([]byte("welcome"))
+	tmpl, err := template.ParseFiles(filepath.Join("views", "index.html"))
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "error occured on processing request", http.StatusInternalServerError)
+		return
+	}
+
+	if err := tmpl.Execute(w, nil); err != nil {
+		log.Println(err.Error())
+		http.Error(w, "error occured on processing request", http.StatusInternalServerError)
+		return
+	}
 }
 
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
