@@ -32,7 +32,12 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := tmpl.Execute(w, nil); err != nil {
+	data := map[string]any{
+		"title":   "I'm learning Golang web",
+		"content": "saya belajar golang web bersama agung setiawan",
+	}
+
+	if err := tmpl.Execute(w, data); err != nil {
 		log.Println(err.Error())
 		http.Error(w, "error occured on processing request", http.StatusInternalServerError)
 		return
