@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"fmt"
 	"golang-web/model"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 func RootHandler(c *gin.Context) {
@@ -45,7 +47,17 @@ func PostBooksHandler(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&bookInput); err != nil {
 		log.Println(err.Error())
-		c.JSON(http.StatusBadRequest, err.Error())
+
+		errMessages := []string{}
+		for _, e := range err.(validator.ValidationErrors) {
+			errMessage := fmt.Sprintf("Error on field %s, condition %s", e.Field(), e.ActualTag())
+			log.Println(errMessage)
+			errMessages = append(errMessages, errMessage)
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"errors": errMessages,
+		})
 		return
 	}
 
