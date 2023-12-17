@@ -2,6 +2,7 @@ package main
 
 import (
 	"golang-web/handler"
+	"golang-web/model"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -10,10 +11,14 @@ import (
 )
 
 func main() {
-	_, err := gorm.Open(sqlite.Open("database.sqlite"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("database.sqlite"), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+	if err := db.AutoMigrate(&model.Book{}); err != nil {
+		log.Fatal(err.Error())
+	}
+
 	router := gin.Default()
 
 	v1 := router.Group("/v1")
