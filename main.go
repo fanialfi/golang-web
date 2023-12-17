@@ -1,10 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"golang-web/handler"
 	"golang-web/model"
 	"log"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/glebarez/sqlite"
@@ -16,20 +16,24 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+	db.Debug()
 	if err := db.AutoMigrate(&model.Book{}); err != nil {
 		log.Fatal(err.Error())
 	}
 
-	book := model.Book{
-		Id:          2,
-		Title:       "atomic habitc",
-		Description: "ini adalah buku yang sangat bagus dari eka kurniawan",
-		Price:       120000,
-		Rating:      5,
-		CreatedAt:   time.Now().UTC(),
-	}
-	if result := db.Create(&book); result.Error != nil {
+	// book := model.Book{
+	// 	Id:          2,
+	// 	Title:       "atomic habitc",
+	// 	Description: "ini adalah buku yang sangat bagus dari eka kurniawan",
+	// 	Price:       120000,
+	// 	Rating:      5,
+	// 	CreatedAt:   time.Now().UTC(),
+	// }
+	var book model.Book
+	if result := db.First(&book); result.Error != nil {
 		log.Fatal(result.Error.Error())
+	} else {
+		fmt.Println(book)
 	}
 
 	router := gin.Default()
